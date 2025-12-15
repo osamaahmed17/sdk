@@ -212,6 +212,7 @@ class TrainerClient:
         status: set[str] = {constants.TRAINJOB_COMPLETE},
         timeout: int = 600,
         polling_interval: int = 2,
+        callbacks: Optional[list] = None,
     ) -> types.TrainJob:
         """Wait for a TrainJob to reach a desired status.
 
@@ -222,6 +223,8 @@ class TrainerClient:
             timeout: Maximum number of seconds to wait for the TrainJob to reach one of the
                 expected statuses.
             polling_interval: The polling interval in seconds to check TrainJob status.
+            callbacks: Optional list of callback functions to be invoked after each polling
+                interval. Each callback should accept a single argument: the TrainJob object.
 
         Returns:
             A TrainJob object that reaches the desired status.
@@ -236,6 +239,7 @@ class TrainerClient:
             status=status,
             timeout=timeout,
             polling_interval=polling_interval,
+            callbacks=callbacks,
         )
 
     def delete_job(self, name: str):
