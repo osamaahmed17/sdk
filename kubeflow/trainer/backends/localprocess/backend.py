@@ -212,20 +212,36 @@ class LocalProcessBackend(RuntimeBackend):
         status: set[str] = {constants.TRAINJOB_COMPLETE},
         timeout: int = 600,
         polling_interval: int = 2,
+        callbacks: Optional[list] = None,
     ) -> types.TrainJob:
+        import time
+
         # find first match or fallback
         _job = next((_job for _job in self.__local_jobs if _job.name == name), None)
 
         if _job is None:
             raise ValueError(f"No TrainJob with name {name}")
-        # find a better implementation for this
-        for _step in _job.steps:
-            if _step.job.status in [
-                constants.TRAINJOB_RUNNING,
-                constants.TRAINJOB_CREATED,
-            ]:
-                _step.job.join(timeout=timeout)
-        return self.get_job(name)
+
+        # Calculate total iterations for timeout
+        max_iterations = round(timeout / polling_interval)
+
+        for _ in range(max_iterations):
+            # Get current job status
+            trainjob = self.get_job(name)
+
+            # Invoke callbacks if provided
+            if callbacks:
+                for callback in callbacks:
+                    callback(trainjob)
+
+            # Return if job has reached desired status
+            if trainjob.status in status:
+                return trainjob
+
+            time.sleep(polling_interval)
+
+        # Timeout reached
+        raise TimeoutError(f"Timeout waiting for TrainJob {name} to reach status: {status}")
 
     def delete_job(self, name: str):
         # find job first.

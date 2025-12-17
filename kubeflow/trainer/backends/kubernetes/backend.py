@@ -355,6 +355,7 @@ class KubernetesBackend(RuntimeBackend):
         status: set[str] = {constants.TRAINJOB_COMPLETE},
         timeout: int = 600,
         polling_interval: int = 2,
+        callbacks: Optional[list] = None,
     ) -> types.TrainJob:
         job_statuses = {
             constants.TRAINJOB_CREATED,
@@ -374,6 +375,11 @@ class KubernetesBackend(RuntimeBackend):
             # Check the status after event is generated for the TrainJob's Pods.
             trainjob = self.get_job(name)
             logger.debug(f"TrainJob {name}, status {trainjob.status}")
+
+            # Invoke callbacks if provided
+            if callbacks:
+                for callback in callbacks:
+                    callback(trainjob)
 
             # Raise an error if TrainJob is Failed and it is not the expected status.
             if (

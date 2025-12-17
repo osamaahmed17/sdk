@@ -74,6 +74,7 @@ class RuntimeBackend(abc.ABC):
         status: set[str] = {constants.TRAINJOB_COMPLETE},
         timeout: int = 600,
         polling_interval: int = 2,
+        callbacks: Optional[list] = None,
     ) -> types.TrainJob:
         raise NotImplementedError()
 

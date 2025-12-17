@@ -612,6 +612,7 @@ class ContainerBackend(RuntimeBackend):
         status: set[str] = {constants.TRAINJOB_COMPLETE},
         timeout: int = 600,
         polling_interval: int = 2,
+        callbacks: Optional[list] = None,
     ) -> types.TrainJob:
         import time
 
@@ -619,6 +620,12 @@ class ContainerBackend(RuntimeBackend):
         while time.time() < end:
             tj = self.get_job(name)
             logger.debug(f"TrainJob {name}, status {tj.status}")
+
+            # Invoke callbacks if provided
+            if callbacks:
+                for callback in callbacks:
+                    callback(tj)
+
             if tj.status in status:
                 return tj
             if constants.TRAINJOB_FAILED not in status and tj.status == constants.TRAINJOB_FAILED:

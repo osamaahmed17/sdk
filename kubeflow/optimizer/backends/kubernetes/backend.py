@@ -268,6 +268,7 @@ class KubernetesBackend(RuntimeBackend):
         status: set[str] = {constants.OPTIMIZATION_JOB_COMPLETE},
         timeout: int = 3600,
         polling_interval: int = 2,
+        callbacks: Optional[list] = None,
     ) -> OptimizationJob:
         job_statuses = {
             constants.OPTIMIZATION_JOB_CREATED,
@@ -289,6 +290,11 @@ class KubernetesBackend(RuntimeBackend):
             logger.debug(
                 f"{constants.OPTIMIZATION_JOB_KIND} {name}, status {optimization_job.status}"
             )
+
+            # Invoke callbacks if provided
+            if callbacks:
+                for callback in callbacks:
+                    callback(optimization_job)
 
             if (
                 constants.OPTIMIZATION_JOB_FAILED not in status

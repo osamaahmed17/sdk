@@ -68,6 +68,7 @@ class RuntimeBackend(abc.ABC):
         status: set[str] = {constants.OPTIMIZATION_JOB_COMPLETE},
         timeout: int = 3600,
         polling_interval: int = 2,
+        callbacks: Optional[list] = None,
     ) -> OptimizationJob:
         raise NotImplementedError()
 
