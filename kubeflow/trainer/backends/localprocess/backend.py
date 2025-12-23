@@ -17,9 +17,9 @@ import logging
 import random
 import string
 import tempfile
+import time
 from typing import Optional, Union
 import uuid
-import time
 from kubeflow.trainer.backends.base import RuntimeBackend
 from kubeflow.trainer.backends.localprocess import utils as local_utils
 from kubeflow.trainer.backends.localprocess.constants import local_runtimes
