@@ -55,21 +55,21 @@ uv run pre-commit run --all-files      # Run all hooks manually
 ```
 kubeflow/
 ├── __init__.py          # Version (__version__)
-├── common/              # Shared utilities, types, constants
+├── common/              # SHARED utilities, constants (used by Trainer AND Optimizer)
 ├── trainer/             # Trainer component
 │   ├── api/             # TrainerClient interface
 │   ├── backends/        
 │   │   ├── kubernetes/  # K8s backend + tests (*_test.py)
 │   │   ├── container/   # Docker/Podman backend + tests
 │   │   └── localprocess/# Local subprocess backend + tests
-│   ├── constants/       # Constants (DATASET_PATH, MODEL_PATH, etc.)
+│   ├── constants/       # Trainer-specific constants (DATASET_PATH, MODEL_PATH)
 │   ├── options/         # K8s options (Labels, Annotations) + tests
 │   ├── types/           # Pydantic v2 data models + tests
 │   └── test/common.py   # Test fixtures (TestCase, SUCCESS, FAILED)
 └── optimizer/           # Optimizer/Katib component
     ├── api/             # OptimizerClient interface
     ├── backends/kubernetes/
-    ├── constants/
+    ├── constants/       # Optimizer-specific constants
     └── types/
 
 scripts/                 # gen-changelog.py
@@ -84,6 +84,7 @@ docs/proposals/          # KEP proposals
 | `Makefile` | Development commands (install-dev, verify, test-python) |
 | `.pre-commit-config.yaml` | Pre-commit hook config |
 | `kubeflow/__init__.py` | Package version |
+| `kubeflow/common/` | Shared logic for both Trainer and Optimizer |
 | `AGENTS.md` | Detailed agent guidelines and coding standards |
 
 ---
@@ -138,6 +139,70 @@ def my_function(param: str) -> Result:
 - Imports: Absolute imports, sorted by ruff/isort
 - First-party imports: `kubeflow`
 - Naming: `snake_case` functions/vars, `PascalCase` classes, `UPPER_SNAKE_CASE` constants
+
+### Logging Pattern (REQUIRED)
+Use standard Python logging, **NOT print statements**:
+
+**Correct:**
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+
+def submit_job(job_name: str) -> str:
+    logger.info("Job %s created", job_name)
+    logger.debug("Job config: %s", config)
+```
+
+ **Incorrect:**
+```python
+print(f"Job {job_name} created")  
+logging.info("Job created")        
+```
+
+### Data Modeling with Dataclasses
+Use `@dataclass` for data holders and internal types:
+
+**Correct:**
+```python
+from dataclasses import dataclass
+
+@dataclass
+class TrainJob:
+    name: str
+    status: str
+    created_at: str
+```
+
+**Incorrect:**
+```python
+class TrainJob:  # Missing @dataclass
+    def __init__(self, name, status, created_at):
+        self.name = name
+        ...
+
+# Or using raw dictionaries
+job = {"name": "job-1", "status": "running"}
+```
+
+### Constants Management
+**Define constants in `constants.py` modules, NOT at the top of logic files:**
+
+**Correct:**
+```python
+# kubeflow/trainer/constants/constants.py
+DATASET_PATH = "/mnt/datasets"
+MODEL_PATH = "/mnt/models"
+
+# In your logic file
+from kubeflow.trainer.constants import DATASET_PATH
+```
+
+**Incorrect:**
+```python
+# At top of backend.py
+DATASET_PATH = "/mnt/datasets" 
+```
 
 ### Test Organization
 - Tests are co-located: `*_test.py` next to source files
