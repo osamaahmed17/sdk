@@ -60,7 +60,7 @@ kubeflow/
 ├── common/              # SHARED utilities, constants (used by Trainer AND Optimizer)
 ├── trainer/             # Trainer component
 │   ├── api/             # TrainerClient interface
-│   ├── backends/        
+│   ├── backends/
 │   │   ├── kubernetes/  # K8s backend + tests (*_test.py)
 │   │   ├── container/   # Docker/Podman backend + tests
 │   │   └── localprocess/# Local subprocess backend + tests
@@ -158,8 +158,8 @@ def submit_job(job_name: str) -> str:
 
  **Incorrect:**
 ```python
-print(f"Job {job_name} created")  
-logging.info("Job created")        
+print(f"Job {job_name} created")
+logging.info("Job created")
 ```
 
 ### Data Modeling with Dataclasses
@@ -203,7 +203,7 @@ from kubeflow.trainer.constants import DATASET_PATH
 **Incorrect:**
 ```python
 # At top of backend.py
-DATASET_PATH = "/mnt/datasets" 
+DATASET_PATH = "/mnt/datasets"
 ```
 
 ### Test Organization
