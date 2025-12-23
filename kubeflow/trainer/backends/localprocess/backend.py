@@ -19,7 +19,7 @@ import string
 import tempfile
 from typing import Optional, Union
 import uuid
-
+import time
 from kubeflow.trainer.backends.base import RuntimeBackend
 from kubeflow.trainer.backends.localprocess import utils as local_utils
 from kubeflow.trainer.backends.localprocess.constants import local_runtimes
@@ -214,18 +214,18 @@ class LocalProcessBackend(RuntimeBackend):
         polling_interval: int = 2,
         callbacks: Optional[list] = None,
     ) -> types.TrainJob:
-        import time
-
         # find first match or fallback
         _job = next((_job for _job in self.__local_jobs if _job.name == name), None)
 
         if _job is None:
             raise ValueError(f"No TrainJob with name {name}")
 
-        # Calculate total iterations for timeout
-        max_iterations = round(timeout / polling_interval)
+        if polling_interval > timeout:
+            raise ValueError(
+                f"Polling interval {polling_interval} must be less than timeout: {timeout}"
+            )
 
-        for _ in range(max_iterations):
+        for _ in range(round(timeout / polling_interval)):
             # Get current job status
             trainjob = self.get_job(name)
 
