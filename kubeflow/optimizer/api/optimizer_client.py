@@ -185,7 +185,7 @@ class OptimizerClient:
         status: set[str] = {constants.OPTIMIZATION_JOB_COMPLETE},
         timeout: int = 3600,
         polling_interval: int = 2,
-        callbacks: Optional[list[Callable[[TrainJob], None]]] = None,
+        callbacks: Optional[list[Callable[[OptimizationJob], None]]] = None,
     ) -> OptimizationJob:
         """Wait for an OptimizationJob to reach a desired status.
 

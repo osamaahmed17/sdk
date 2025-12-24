@@ -74,7 +74,7 @@ class RuntimeBackend(abc.ABC):
         status: set[str] = {constants.TRAINJOB_COMPLETE},
         timeout: int = 600,
         polling_interval: int = 2,
-        callbacks: Optional[list[Callable[[TrainJob], None]]] = None,
+        callbacks: Optional[list[Callable[[types.TrainJob], None]]] = None,
     ) -> types.TrainJob:
         raise NotImplementedError()
 
