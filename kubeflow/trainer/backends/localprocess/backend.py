@@ -213,7 +213,7 @@ class LocalProcessBackend(RuntimeBackend):
         status: set[str] = {constants.TRAINJOB_COMPLETE},
         timeout: int = 600,
         polling_interval: int = 2,
-        callbacks: Optional[list] = None,
+        callbacks: Optional[list[Callable[[TrainJob], None]]] = None
     ) -> types.TrainJob:
         # find first match or fallback
         _job = next((_job for _job in self.__local_jobs if _job.name == name), None)

@@ -612,7 +612,7 @@ class ContainerBackend(RuntimeBackend):
         status: set[str] = {constants.TRAINJOB_COMPLETE},
         timeout: int = 600,
         polling_interval: int = 2,
-        callbacks: Optional[list] = None,
+        callbacks: Optional[list[Callable[[TrainJob], None]]] = None,
     ) -> types.TrainJob:
         import time
 
