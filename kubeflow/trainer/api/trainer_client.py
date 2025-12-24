@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 import logging
 from typing import Optional, Union
 
@@ -212,7 +212,7 @@ class TrainerClient:
         status: set[str] = {constants.TRAINJOB_COMPLETE},
         timeout: int = 600,
         polling_interval: int = 2,
-        callbacks: Optional[list[Callable[[TrainJob], None]]] = None
+        callbacks: Optional[list[Callable[[TrainJob], None]]] = None,
     ) -> types.TrainJob:
         """Wait for a TrainJob to reach a desired status.
 

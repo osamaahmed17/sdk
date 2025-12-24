@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import abc
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from typing import Optional, Union
 
 from kubeflow.trainer.constants import constants

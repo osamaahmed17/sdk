@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 import logging
 import multiprocessing
 import random
@@ -268,7 +268,7 @@ class KubernetesBackend(RuntimeBackend):
         status: set[str] = {constants.OPTIMIZATION_JOB_COMPLETE},
         timeout: int = 3600,
         polling_interval: int = 2,
-        callbacks: Optional[list[Callable[[TrainJob], None]]] = None
+        callbacks: Optional[list[Callable[[TrainJob], None]]] = None,
     ) -> OptimizationJob:
         job_statuses = {
             constants.OPTIMIZATION_JOB_CREATED,

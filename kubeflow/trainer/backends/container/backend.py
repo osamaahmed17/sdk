@@ -37,7 +37,7 @@ Key behaviors:
   Docker/Podman backends, but with automatic runtime detection.
 """
 
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from datetime import datetime
 import logging
 import os
